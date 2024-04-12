@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @Surendharan04
 - 👀 I’m interested in Coding.
-- 🌱 I’m currently learning Information Technology 
+- 🌱 I've graduated in Information Technology 
 - 💞️ I’m looking to collaborate on some app projects to gain experience in coding.
 - 📫 How to reach me:surendharanbe@gmail.com
 
