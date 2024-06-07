@@ -55,7 +55,7 @@ public class DatabaseOperations {
                 dataAction(Constants.INSERT_QUERY, strValue, intValue);
             }
         }
-        System.out.println("Records inserted");
+        Constants.DB_LOGGER.info("Records Inserted");
     }
 
 

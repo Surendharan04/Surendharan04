@@ -1,6 +1,7 @@
 package com.jdbcsample;
 
 import java.sql.ResultSet;
+import java.util.logging.Level;
 
 import com.jdbcsample.Controller.Constants;
 import com.jdbcsample.Controller.DatabaseOperations;
@@ -10,15 +11,14 @@ public class Main {
         try {
             DatabaseOperations.createTable();
             DatabaseOperations.convertDataTable(Constants.FILE_PATH);
-            System.out.println();
 
             // Retrieve and display data from the database
             ResultSet rs = DatabaseOperations.getDBData(Constants.SELECT_QUERY);
 
             while (rs.next()) {
-                System.out.print("Name: " + rs.getString("Name") + " | ");
-                System.out.println("Marks: " + rs.getInt("Marks") + "/100");
-                System.out.println();
+                String name = rs.getString("Name");
+                int mark = rs.getInt("Mark");
+                Constants.MAIN_LOGGER.log(Level.INFO, "Name: {0} | Marks: {1}/100", new Object[] { name, mark });
             }
             rs.close();
         } 
