@@ -1,4 +1,4 @@
-package com.jdbcsample;
+package com.jdbcsample.Controller;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,20 +13,24 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.jdbcsample.Connection.DatabaseConnection;
+
 public class DatabaseOperations {
 
     private static Connection con;
     private static PreparedStatement pst;
-    
-    private static String query = "INSERT INTO Student(Name, Mark) VALUES(?, ?)";
-    
-    public static void convertDataTable(String path) throws IOException, SQLException{
+
+    public static void convertDataTable(String path) throws IOException, SQLException {
         FileInputStream fis = new FileInputStream(path);
         try (XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> itr = sheet.iterator();
+            //The heading - Skipped
+            if (itr.hasNext()) {
+                itr.next();
+            }
 
-            while(itr.hasNext()){
+            while (itr.hasNext()) {
                 String strValue = "";
                 int intValue = 0;
 
@@ -40,7 +44,7 @@ public class DatabaseOperations {
                             break;
 
                         case NUMERIC:
-                            intValue = (int)cell.getNumericCellValue();
+                            intValue = (int) cell.getNumericCellValue();
                             break;
 
                         default:
@@ -48,33 +52,40 @@ public class DatabaseOperations {
                             break;
                     }
                 }
-                dataAction(query, strValue, intValue);
+                dataAction(Constants.INSERT_QUERY, strValue, intValue);
             }
         }
         System.out.println("Records inserted");
     }
 
 
+    public static void createTable() throws SQLException {
+        dataAction(Constants.CREATE_TABLE_QUERY, null, 0);
+    }
+
+
     public static void dataAction(String query, String strValue, int intValue) throws SQLException {
         con = DatabaseConnection.getConnection();
         pst = con.prepareStatement(query);
-        pst.setString(1, strValue);
-        pst.setInt(2, intValue);
+        if (strValue != null) {
+            pst.setString(1, strValue);
+        }
+        // else{
+        //     pst.setString(1, "");
+        // }
+        if (intValue != 0) {
+            pst.setInt(2, intValue);
+        }
+        // else{
+        //     pst.setInt(2, 0);
+        // }
         pst.executeUpdate();
     }
 
 
-    public static void getDBData(String query) throws SQLException{
+    public static ResultSet getDBData(String query) throws SQLException {
         con = DatabaseConnection.getConnection();
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(query);
-
-        while(rs.next()){
-            System.out.print("Name: " + rs.getString(2) + " | ");
-            System.out.println("Marks: " + rs.getInt(3) + "/100");
-            System.out.println();
-        }
-        st.close();
-        rs.close();
+        return st.executeQuery(query);
     }
 }
